@@ -45,6 +45,9 @@ func main() {
 			sistema.ExibirMetricas()
 		case 7:
 			fmt.Println("----------------------------")
+			sistema.ExibirPedidosEmAberto()
+		case 8:
+			fmt.Println("----------------------------")
 			fmt.Println("Saindo do sistema.")
 			os.Exit(0)
 		default:

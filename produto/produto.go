@@ -6,4 +6,3 @@ type Produto struct {
 	Descricao string
 	Preco     float64
 }
-
