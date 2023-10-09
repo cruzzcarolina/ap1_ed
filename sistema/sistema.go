@@ -7,6 +7,7 @@ import (
 	produto "mcronalds/produto"
 	"os"
 	"strings"
+	"time"
 )
 
 type Sistema struct {
@@ -17,11 +18,43 @@ type Sistema struct {
 		TotalPedidos  int
 		TotalReceita  float64
 	}
+	TempoMedioExpedicao time.Duration
 }
 
+// AdicionarProduto adiciona um produto ao carrinho
 func (s *Sistema) AdicionarProduto() {
 	var produto produto.Produto
 	produto.ID = s.Carrinho.TotalProdutos + 1
+
+	if produto.ID <= 0 {
+		fmt.Println("ID do produto deve ser um valor positivo.")
+		return
+	}
+
+	// Verificar limite de produtos
+	if s.Carrinho.TotalProdutos >= 50 {
+		fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
+		return
+	}
+	if s.Carrinho.TotalPedidos >= 1000 {
+		fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
+		return
+	}
+
+	// Verificar se o produto já existe no carrinho
+	for i, p := range s.Produtos {
+		if p.ID == produto.ID {
+			fmt.Print("Quantidade do produto: ")
+			fmt.Scanln(&produto.Quantidade)
+			if produto.Quantidade < 0 {
+				fmt.Println("A quantidade do produto deve ser um valor positivo.")
+				return
+			}
+			s.Produtos[i].Quantidade += produto.Quantidade
+			fmt.Println("Quantidade do produto atualizada com sucesso.")
+			return
+		}
+	}
 
 	fmt.Print("Nome do produto: ")
 	nome, _ := bufio.NewReader(os.Stdin).ReadString('\n')
@@ -38,13 +71,12 @@ func (s *Sistema) AdicionarProduto() {
 		fmt.Println("Preço do produto deve ser um valor positivo.")
 		return
 	}
-	// Verificar limite de produtos
-	if s.Carrinho.TotalProdutos >= 50 {
-		fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
-		return
-	}
-	if s.Carrinho.TotalPedidos >= 1000 {
-		fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
+
+	fmt.Print("Quantidade do produto: ")
+	fmt.Scanln(&produto.Quantidade)
+
+	if produto.Quantidade <= 0 {
+		fmt.Println("A quantidade do produto deve ser um valor positivo.")
 		return
 	}
 
@@ -79,6 +111,7 @@ func (s *Sistema) ExibirProdutos() {
 func (s *Sistema) FazerPedido() {
 	var pedido pedido.Pedido
 	pedido.ID = s.Carrinho.TotalPedidos + 1
+	pedido.DataHora = time.Now()
 
 	fmt.Print("Pedido para delivery (true/false): ")
 	fmt.Scanln(&pedido.Entrega)
@@ -150,7 +183,6 @@ func (s *Sistema) FazerPedido() {
 		return
 	}
 
-	// Verificar limite de pedidos
 	if s.Carrinho.TotalPedidos >= 1000 {
 		fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
 		return
@@ -170,6 +202,10 @@ func (s *Sistema) ExpedirPedido() {
 	pedido := s.Pedidos[0]
 	s.Pedidos = s.Pedidos[1:]
 	s.Carrinho.TotalReceita += pedido.ValorTotal
+
+	// Calcule o tempo de expedição para este pedido e atualize o tempo médio
+	tempoExpedicao := time.Since(pedido.DataHora)
+	s.TempoMedioExpedicao = (s.TempoMedioExpedicao*time.Duration(s.Carrinho.TotalPedidos-1) + tempoExpedicao) / time.Duration(s.Carrinho.TotalPedidos)
 
 	fmt.Printf("Pedido #%d expedido:\n", pedido.ID)
 	fmt.Printf("Entrega: %t, Total: R$%.2f\n", pedido.Entrega, pedido.ValorTotal)
