@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 type Product struct {
@@ -71,16 +72,15 @@ func main() {
 func (s *System) AddProduct() {
 	var product Product
 	product.ID = s.FoodTruck.TotalProducts + 1
-	leitor := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Nome do produto: ")
-	nome, _ := leitor.ReadString('\n')
-	fmt.Scanln(&nome)
-	nome = product.Name
+	name, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	product.Name = strings.TrimSpace(name)
+
 	fmt.Print("Descrição do produto: ")
-	descricao, _ := leitor.ReadString('\n')
-	fmt.Scanln(&descricao)
-	descricao = product.Description
+	description, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	product.Description = strings.TrimSpace(description)
+
 	fmt.Print("Preço do produto (R$): ")
 	fmt.Scanln(&product.Price)
 
