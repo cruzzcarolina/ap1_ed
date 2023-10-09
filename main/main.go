@@ -17,7 +17,8 @@ func main() {
 		fmt.Println("4. Fazer Pedido")
 		fmt.Println("5. Expedir Pedido")
 		fmt.Println("6. Exibir Métricas do Sistema")
-		fmt.Println("7. Sair")
+		fmt.Println("7. Exibir Pedidos Em Aberto")
+		fmt.Println("8. Sair")
 		fmt.Println("----------------------------")
 
 		var escolha int
@@ -44,6 +45,9 @@ func main() {
 			fmt.Println("----------------------------")
 			sistema.ExibirMetricas()
 		case 7:
+			fmt.Println("----------------------------")
+			sistema.ExibirPedidosEmAberto()
+		case 8:
 			fmt.Println("----------------------------")
 			fmt.Println("Saindo do sistema.")
 			os.Exit(0)
