@@ -7,32 +7,32 @@ import (
 	"strings"
 )
 
-type Product struct {
-	ID          int
-	Name        string
-	Description string
-	Price       float64
+type Produto struct {
+	ID        int
+	Nome      string
+	Descricao string
+	Preco     float64
 }
 
-type Order struct {
-	ID          int
-	Delivery    bool
-	Products    []Product
-	TotalAmount float64
+type Pedido struct {
+	ID         int
+	Entrega    bool
+	Produtos   []Produto
+	ValorTotal float64
 }
 
-type System struct {
-	Products  []Product
-	Orders    []Order
-	FoodTruck struct {
-		TotalProducts int
-		TotalOrders   int
-		TotalRevenue  float64
+type Sistema struct {
+	Produtos []Produto
+	Pedidos  []Pedido
+	Carrinho struct {
+		TotalProdutos int
+		TotalPedidos  int
+		TotalReceita  float64
 	}
 }
 
 func main() {
-	var system System
+	var sistema Sistema
 	for {
 		fmt.Println("McRonald's - Sistema de Pedidos Eletrônicos")
 		fmt.Println("1. Cadastrar Produto")
@@ -43,23 +43,23 @@ func main() {
 		fmt.Println("6. Exibir Métricas do Sistema")
 		fmt.Println("7. Sair")
 
-		var choice int
+		var escolha int
 		fmt.Print("Escolha uma opção: ")
-		fmt.Scanln(&choice)
+		fmt.Scanln(&escolha)
 
-		switch choice {
+		switch escolha {
 		case 1:
-			system.AddProduct()
+			sistema.AdicionarProduto()
 		case 2:
-			system.RemoveProduct()
+			sistema.RemoverProduto()
 		case 3:
-			system.ShowProducts()
+			sistema.ExibirProdutos()
 		case 4:
-			system.PlaceOrder()
+			sistema.FazerPedido()
 		case 5:
-			system.ExpediteOrder()
+			sistema.ExpedirPedido()
 		case 6:
-			system.ShowMetrics()
+			sistema.ExibirMetricas()
 		case 7:
 			fmt.Println("Saindo do sistema.")
 			os.Exit(0)
@@ -69,34 +69,34 @@ func main() {
 	}
 }
 
-func (s *System) AddProduct() {
-	var product Product
-	product.ID = s.FoodTruck.TotalProducts + 1
+func (s *Sistema) AdicionarProduto() {
+	var produto Produto
+	produto.ID = s.Carrinho.TotalProdutos + 1
 
 	fmt.Print("Nome do produto: ")
-	name, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-	product.Name = strings.TrimSpace(name)
+	nome, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	produto.Nome = strings.TrimSpace(nome)
 
 	fmt.Print("Descrição do produto: ")
-	description, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-	product.Description = strings.TrimSpace(description)
+	descricao, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	produto.Descricao = strings.TrimSpace(descricao)
 
 	fmt.Print("Preço do produto (R$): ")
-	fmt.Scanln(&product.Price)
+	fmt.Scanln(&produto.Preco)
 
-	s.Products = append(s.Products, product)
-	s.FoodTruck.TotalProducts++
+	s.Produtos = append(s.Produtos, produto)
+	s.Carrinho.TotalProdutos++
 	fmt.Println("Produto cadastrado com sucesso.")
 }
 
-func (s *System) RemoveProduct() {
+func (s *Sistema) RemoverProduto() {
 	fmt.Print("Digite o ID do produto a ser removido: ")
-	var productID int
-	fmt.Scanln(&productID)
+	var idProduto int
+	fmt.Scanln(&idProduto)
 
-	for i, product := range s.Products {
-		if product.ID == productID {
-			s.Products = append(s.Products[:i], s.Products[i+1:]...)
+	for i, produto := range s.Produtos {
+		if produto.ID == idProduto {
+			s.Produtos = append(s.Produtos[:i], s.Produtos[i+1:]...)
 			fmt.Println("Produto removido com sucesso.")
 			return
 		}
@@ -105,63 +105,63 @@ func (s *System) RemoveProduct() {
 	fmt.Println("Produto não encontrado.")
 }
 
-func (s *System) ShowProducts() {
+func (s *Sistema) ExibirProdutos() {
 	fmt.Println("Lista de Produtos:")
-	for _, product := range s.Products {
-		fmt.Printf("ID: %d, Nome: %s, Descrição: %s, Preço: R$%.2f\n", product.ID, product.Name, product.Description, product.Price)
+	for _, produto := range s.Produtos {
+		fmt.Printf("ID: %d, Nome: %s, Descrição: %s, Preço: R$%.2f\n", produto.ID, produto.Nome, produto.Descricao, produto.Preco)
 	}
 }
 
-func (s *System) PlaceOrder() {
-	var order Order
-	order.ID = s.FoodTruck.TotalOrders + 1
+func (s *Sistema) FazerPedido() {
+	var pedido Pedido
+	pedido.ID = s.Carrinho.TotalPedidos + 1
 
-	fmt.Print("Pedido para entrega (true/false): ")
-	fmt.Scanln(&order.Delivery)
+	fmt.Print("Pedido para delievery (true/false): ")
+	fmt.Scanln(&pedido.Entrega)
 
 	fmt.Println("Escolha até 10 produtos para o pedido:")
 	for {
-		if len(order.Products) >= 10 {
+		if len(pedido.Produtos) >= 10 {
 			break
 		}
 
 		fmt.Print("ID do produto (0 para parar): ")
-		var productID int
-		fmt.Scanln(&productID)
-		if productID == 0 {
+		var idProduto int
+		fmt.Scanln(&idProduto)
+		if idProduto == 0 {
 			break
 		}
 
 		// Encontre o produto pelo ID e adicione ao pedido
-		for _, product := range s.Products {
-			if product.ID == productID {
-				order.Products = append(order.Products, product)
-				order.TotalAmount += product.Price
+		for _, produto := range s.Produtos {
+			if produto.ID == idProduto {
+				pedido.Produtos = append(pedido.Produtos, produto)
+				pedido.ValorTotal += produto.Preco
 			}
 		}
 	}
 
-	s.Orders = append(s.Orders, order)
-	s.FoodTruck.TotalOrders++
+	s.Pedidos = append(s.Pedidos, pedido)
+	s.Carrinho.TotalPedidos++
 	fmt.Println("Pedido feito com sucesso.")
 }
 
-func (s *System) ExpediteOrder() {
-	if len(s.Orders) == 0 {
+func (s *Sistema) ExpedirPedido() {
+	if len(s.Pedidos) == 0 {
 		fmt.Println("Nenhum pedido pendente para expedir.")
 		return
 	}
 
-	order := s.Orders[0]
-	s.Orders = s.Orders[1:]
-	s.FoodTruck.TotalRevenue += order.TotalAmount
+	pedido := s.Pedidos[0]
+	s.Pedidos = s.Pedidos[1:]
+	s.Carrinho.TotalReceita += pedido.ValorTotal
 
-	fmt.Printf("Pedido #%d expedido:\n", order.ID)
-	fmt.Printf("Entrega: %t, Total: R$%.2f\n", order.Delivery, order.TotalAmount)
+	fmt.Printf("Pedido #%d expedido:\n", pedido.ID)
+	fmt.Printf("Entrega: %t, Total: R$%.2f\n", pedido.Entrega, pedido.ValorTotal)
 }
 
-func (s *System) ShowMetrics() {
-	fmt.Printf("Número total de produtos cadastrados: %d\n", s.FoodTruck.TotalProducts)
-	fmt.Printf("Número de pedidos encerrados: %d\n", s.FoodTruck.TotalOrders)
-	fmt.Printf("Faturamento total até o momento: R$%.2f\n", s.FoodTruck.TotalRevenue)
+func (s *Sistema) ExibirMetricas() {
+	fmt.Printf("Número total de produtos cadastrados: %d\n", s.Carrinho.TotalProdutos)
+	fmt.Printf("Número de pedidos encerrados: %d\n", s.Carrinho.TotalPedidos)
+	fmt.Printf("Faturamento total até o momento: R$%.2f\n", s.Carrinho.TotalReceita)
 }
