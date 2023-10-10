@@ -226,6 +226,7 @@ func (s *Sistema) ExibirPedidosEmAberto() {
 		fmt.Printf("ID: %d, Entrega: %t, Total: R$%.2f\n", pedido.ID, pedido.Entrega, pedido.ValorTotal)
 	}
 }
+
 func (s *Sistema) CadastrarProdutosEmLote(produtosEmLote []l.ProdutoEmLote) {
 	for _, p := range produtosEmLote {
 		p.ProdutoID = s.Carrinho.TotalProdutos + 1
@@ -235,9 +236,47 @@ func (s *Sistema) CadastrarProdutosEmLote(produtosEmLote []l.ProdutoEmLote) {
 			Descricao:  p.Descricao,
 			Preco:      p.Preco,
 			Quantidade: p.Quantidade,
+			Categoria:  "",
 		})
 		s.Carrinho.TotalProdutos++
 	}
+}
+func (s *Sistema) CadastrarProdutosEmLote2() {
+	fmt.Print("Quantos produtos deseja cadastrar? ")
+	var quantidadeProdutos int
+	fmt.Scanln(&quantidadeProdutos)
+
+	produtosEmLote := make([]l.ProdutoEmLote, quantidadeProdutos)
+
+	for i := 0; i < quantidadeProdutos; i++ {
+		fmt.Printf("Produto #%d\n", i+1)
+		fmt.Print("Nome do produto: ")
+		var nome string
+		fmt.Scanln(&nome)
+
+		fmt.Print("Descrição do produto: ")
+		var descricao string
+		fmt.Scanln(&descricao)
+
+		fmt.Print("Preço do produto: ")
+		var preco float64
+		fmt.Scanln(&preco)
+
+		fmt.Print("Quantidade do produto: ")
+		var quantidade int
+		fmt.Scanln(&quantidade)
+
+		produtosEmLote[i] = l.ProdutoEmLote{
+			ProdutoID:  i,
+			Nome:       nome,
+			Descricao:  descricao,
+			Preco:      preco,
+			Quantidade: quantidade,
+		}
+	}
+
+	s.CadastrarProdutosEmLote(produtosEmLote)
+	fmt.Println("Produtos cadastrados em lote com sucesso.")
 }
 
 func (s *Sistema) CadastrarProdutosEmLoteCSV() {
@@ -281,6 +320,7 @@ func (s *Sistema) CadastrarProdutosEmLoteCSV() {
 		}
 
 		produtosEmLote[i] = l.ProdutoEmLote{
+			ProdutoID:  i,
 			Nome:       linha[0],
 			Descricao:  linha[1],
 			Preco:      preco,

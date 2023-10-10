@@ -49,4 +49,3 @@ Descrevendo como utilizar o programa
    - Comando: Escolha a opção 8.
    - Exemplo de Resposta: "Saindo do sistema."
 
-Lembre-se de que o programa continuará em execução até que você escolha a opção "Sair". Certifique-se de seguir as instruções apresentadas pelo programa para interagir com sucesso com as diferentes funcionalidades.
