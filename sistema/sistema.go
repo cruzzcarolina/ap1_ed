@@ -25,64 +25,70 @@ type Sistema struct {
 }
 
 func (s *Sistema) AdicionarProduto() {
-	var produto produto.Produto
-	produto.ID = s.Carrinho.TotalProdutos + 1
+	for {
+		var produto produto.Produto
+		produto.ID = s.Carrinho.TotalProdutos + 1
 
-	if produto.ID <= 0 {
-		fmt.Println("ID do produto deve ser um valor positivo.")
-		return
-	}
+    if produto.ID <= 0 {
+      fmt.Println("ID do produto deve ser um valor positivo.")
+      return
+    }
 
-	if s.Carrinho.TotalProdutos >= 50 {
-		fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
-		return
-	}
-	if s.Carrinho.TotalPedidos >= 1000 {
-		fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
-		return
-	}
+    // Verificar limite de produtos
+    if s.Carrinho.TotalProdutos >= 50 {
+      fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
+      return
+    }
+    if s.Carrinho.TotalPedidos >= 1000 {
+      fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
+      return
+    }
 
-	for i, p := range s.Produtos {
-		if p.ID == produto.ID {
-			fmt.Print("Quantidade do produto: ")
-			fmt.Scanln(&produto.Quantidade)
-			if produto.Quantidade < 0 {
-				fmt.Println("A quantidade do produto deve ser um valor positivo.")
-				return
-			}
-			s.Produtos[i].Quantidade += produto.Quantidade
-			fmt.Println("Quantidade do produto atualizada com sucesso.")
-			return
-		}
-	}
+    // Verificar se o produto já existe no carrinho
+    for i, p := range s.Produtos {
+      if p.ID == produto.ID {
+        fmt.Print("Quantidade do produto: ")
+        fmt.Scanln(&produto.Quantidade)
+        if produto.Quantidade < 0 {
+          fmt.Println("A quantidade do produto deve ser um valor positivo.")
+          return
+        }
+        s.Produtos[i].Quantidade += produto.Quantidade
+        fmt.Println("Quantidade do produto atualizada com sucesso.")
+        return
+      }
+    }
 
-	fmt.Print("Nome do produto: ")
-	nome, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-	produto.Nome = strings.TrimSpace(nome)
+    fmt.Print("Nome do produto: ")
+    nome, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+    produto.Nome = strings.TrimSpace(nome)
 
-	fmt.Print("Descrição do produto: ")
-	descricao, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-	produto.Descricao = strings.TrimSpace(descricao)
+      fmt.Print("Descrição do produto: ")
+      descricao, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+      produto.Descricao = strings.TrimSpace(descricao)
 
-	fmt.Print("Preço do produto (R$): ")
-	fmt.Scanln(&produto.Preco)
+      fmt.Print("Preço do produto (R$): ")
+      fmt.Scanln(&produto.Preco)
 
-	if produto.Preco < 0 {
-		fmt.Println("Preço do produto deve ser um valor positivo.")
-		return
-	}
+      if produto.Preco < 0 {
+        fmt.Println("Preço do produto deve ser um valor positivo.")
+        return
+      }
 
-	fmt.Print("Quantidade do produto: ")
-	fmt.Scanln(&produto.Quantidade)
+      s.Produtos = append(s.Produtos, produto)
+      s.Carrinho.TotalProdutos++
+      fmt.Println("Produto cadastrado com sucesso.")
+      fmt.Println("----------------------------")
 
-	if produto.Quantidade <= 0 {
-		fmt.Println("A quantidade do produto deve ser um valor positivo.")
-		return
-	}
+      fmt.Print("Deseja adicionar mais produtos? (s/n): ")
+      fmt.Println("----------------------------")
 
-	s.Produtos = append(s.Produtos, produto)
-	s.Carrinho.TotalProdutos++
-	fmt.Println("Produto cadastrado com sucesso.")
+      var continuar string
+      fmt.Scanln(&continuar)
+      if continuar != "s" {
+        break
+      }
+	   }
 }
 
 func (s *Sistema) RemoverProduto() {
@@ -137,8 +143,18 @@ func (s *Sistema) FazerPedido() {
 			produtoEncontrado := false
 			for _, p := range s.Produtos {
 				if p.ID == idProduto {
+
+					fmt.Print("Quantidade do produto: ")
+					var quantidade int
+					fmt.Scanln(&quantidade)
+					if quantidade <= 0 {
+						fmt.Println("A quantidade do produto deve ser um valor positivo.")
+						continue
+					}
+
+					p.Quantidade = quantidade
 					pedido.Produtos = append(pedido.Produtos, p)
-					pedido.ValorTotal += p.Preco
+					pedido.ValorTotal += p.Preco * float64(quantidade)
 					produtoEncontrado = true
 					break
 				}
@@ -157,8 +173,18 @@ func (s *Sistema) FazerPedido() {
 			produtoEncontrado := false
 			for _, p := range s.Produtos {
 				if p.Nome == nomeProduto {
+
+					fmt.Print("Quantidade do produto: ")
+					var quantidade int
+					fmt.Scanln(&quantidade)
+					if quantidade <= 0 {
+						fmt.Println("A quantidade do produto deve ser um valor positivo.")
+						continue
+					}
+
+					p.Quantidade = quantidade
 					pedido.Produtos = append(pedido.Produtos, p)
-					pedido.ValorTotal += p.Preco
+					pedido.ValorTotal += p.Preco * float64(quantidade)
 					produtoEncontrado = true
 					break
 				}
@@ -183,6 +209,13 @@ func (s *Sistema) FazerPedido() {
 		return
 	}
 
+
+	if pedido.Entrega {
+		// Calcule a taxa de entrega (substitua isso pelo cálculo real)
+		taxaDeEntrega := 5.0 // Exemplo: taxa fixa de entrega de R$5.00
+		pedido.ValorTotal += taxaDeEntrega
+	}
+
 	if s.Carrinho.TotalPedidos >= 1000 {
 		fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
 		return
@@ -190,6 +223,8 @@ func (s *Sistema) FazerPedido() {
 
 	s.Pedidos = append(s.Pedidos, pedido)
 	s.Carrinho.TotalPedidos++
+	fmt.Println("----------------------------")
+	fmt.Printf("Total:  R$ %.2f ", pedido.ValorTotal)
 	fmt.Println("Pedido feito com sucesso.")
 }
 
