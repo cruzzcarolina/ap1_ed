@@ -12,14 +12,15 @@ func main() {
 		fmt.Println("----------------------------")
 		fmt.Println("McRonald's - Sistema de Pedidos Eletrônicos")
 		fmt.Println("1. Cadastrar Produto")
-		fmt.Println("2. Remover Produto")
-		fmt.Println("3. Exibir Produtos")
-		fmt.Println("4. Fazer Pedido")
-		fmt.Println("5. Expedir Pedido")
-		fmt.Println("6. Exibir Métricas do Sistema")
-    fmt.Println("7. Exibir Pedidos Em Aberto")
-		fmt.Println("8. Sair")
-
+		fmt.Println("2. Cadastrar Produtos em Lote via CSV")
+		fmt.Println("3. Cadastrar Produtos em Lote")
+		fmt.Println("4. Remover Produto")
+		fmt.Println("5. Exibir Produtos")
+		fmt.Println("6. Fazer Pedido")
+		fmt.Println("7. Expedir Pedido")
+		fmt.Println("8. Exibir Métricas do Sistema")
+		fmt.Println("9. Exibir Pedidos Em Aberto")
+		fmt.Println("10. Sair")
 		fmt.Println("----------------------------")
 
 		var escolha int
@@ -31,24 +32,30 @@ func main() {
 			fmt.Println("----------------------------")
 			sistema.AdicionarProduto()
 		case 2:
-			fmt.Println("----------------------------")
-			sistema.RemoverProduto()
+			fmt.Println("------------------------------")
+			sistema.CadastrarProdutosEmLoteCSV()
 		case 3:
-			fmt.Println("----------------------------")
-			sistema.ExibirProdutos()
+			fmt.Println("------------------------------")
+			sistema.CadastrarProdutosEmLote2()
 		case 4:
 			fmt.Println("----------------------------")
-			sistema.FazerPedido()
+			sistema.RemoverProduto()
 		case 5:
 			fmt.Println("----------------------------")
-			sistema.ExpedirPedido()
+			sistema.ExibirProdutos()
 		case 6:
 			fmt.Println("----------------------------")
-			sistema.ExibirMetricas()
+			sistema.FazerPedido()
 		case 7:
 			fmt.Println("----------------------------")
-			sistema.ExibirPedidosEmAberto()
+			sistema.ExpedirPedido()
 		case 8:
+			fmt.Println("----------------------------")
+			sistema.ExibirMetricas()
+		case 9:
+			fmt.Println("----------------------------")
+			sistema.ExibirPedidosEmAberto()
+		case 10:
 			fmt.Println("----------------------------")
 			fmt.Println("Saindo do sistema.")
 			os.Exit(0)

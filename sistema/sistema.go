@@ -2,10 +2,13 @@ package sistema
 
 import (
 	"bufio"
+	"encoding/csv"
 	"fmt"
 	pedido "mcronalds/pedido"
 	produto "mcronalds/produto"
+	l "mcronalds/produtolote"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -21,7 +24,6 @@ type Sistema struct {
 	TempoMedioExpedicao time.Duration
 }
 
-// AdicionarProduto adiciona um produto ao carrinho
 func (s *Sistema) AdicionarProduto() {
 	for {
 		var produto produto.Produto
@@ -250,17 +252,114 @@ func (s *Sistema) ExibirMetricas() {
 	fmt.Printf("Faturamento total até o momento: R$%.2f\n", s.Carrinho.TotalReceita)
 }
 
-func (s *Sistema) CadastrarProdutosEmLote(produtos []produto.Produto) {
-	for _, p := range produtos {
-		p.ID = s.Carrinho.TotalProdutos + 1
-		s.Produtos = append(s.Produtos, p)
-		s.Carrinho.TotalProdutos++
-	}
-}
-
 func (s *Sistema) ExibirPedidosEmAberto() {
 	fmt.Println("Pedidos em aberto:")
 	for _, pedido := range s.Pedidos {
 		fmt.Printf("ID: %d, Entrega: %t, Total: R$%.2f\n", pedido.ID, pedido.Entrega, pedido.ValorTotal)
 	}
+}
+
+func (s *Sistema) CadastrarProdutosEmLote(produtosEmLote []l.ProdutoEmLote) {
+	for _, p := range produtosEmLote {
+		p.ProdutoID = s.Carrinho.TotalProdutos + 1
+		s.Produtos = append(s.Produtos, produto.Produto{
+			ID:         p.ProdutoID,
+			Nome:       p.Nome,
+			Descricao:  p.Descricao,
+			Preco:      p.Preco,
+			Quantidade: p.Quantidade,
+			Categoria:  "",
+		})
+		s.Carrinho.TotalProdutos++
+	}
+}
+func (s *Sistema) CadastrarProdutosEmLote2() {
+	fmt.Print("Quantos produtos deseja cadastrar? ")
+	var quantidadeProdutos int
+	fmt.Scanln(&quantidadeProdutos)
+
+	produtosEmLote := make([]l.ProdutoEmLote, quantidadeProdutos)
+
+	for i := 0; i < quantidadeProdutos; i++ {
+		fmt.Printf("Produto #%d\n", i+1)
+		fmt.Print("Nome do produto: ")
+		var nome string
+		fmt.Scanln(&nome)
+
+		fmt.Print("Descrição do produto: ")
+		var descricao string
+		fmt.Scanln(&descricao)
+
+		fmt.Print("Preço do produto: ")
+		var preco float64
+		fmt.Scanln(&preco)
+
+		fmt.Print("Quantidade do produto: ")
+		var quantidade int
+		fmt.Scanln(&quantidade)
+
+		produtosEmLote[i] = l.ProdutoEmLote{
+			ProdutoID:  i,
+			Nome:       nome,
+			Descricao:  descricao,
+			Preco:      preco,
+			Quantidade: quantidade,
+		}
+	}
+
+	s.CadastrarProdutosEmLote(produtosEmLote)
+	fmt.Println("Produtos cadastrados em lote com sucesso.")
+}
+
+func (s *Sistema) CadastrarProdutosEmLoteCSV() {
+	fmt.Print("Nome do arquivo CSV de produtos em lote: ")
+	var arquivoCSV string
+	fmt.Scanln(&arquivoCSV)
+
+	arquivo, err := os.Open(arquivoCSV)
+	if err != nil {
+		fmt.Println("Erro ao abrir o arquivo:", err)
+		return
+	}
+	defer arquivo.Close()
+
+	reader := csv.NewReader(arquivo)
+	linhas, err := reader.ReadAll()
+	if err != nil {
+		fmt.Println("Erro ao ler o arquivo CSV:", err)
+		return
+	}
+
+	produtosEmLote := make([]l.ProdutoEmLote, len(linhas))
+
+	for i, linha := range linhas {
+		if len(linha) != 4 {
+			fmt.Printf("Linha %d do CSV é inválida e será ignorada.\n", i+1)
+			continue
+		}
+
+		// Converte os valores do CSV para tipos apropriados
+		preco, err := strconv.ParseFloat(linha[2], 64)
+		if err != nil {
+			fmt.Printf("Erro ao converter preço na linha %d: %v\n", i+1, err)
+			continue
+		}
+
+		quantidade, err := strconv.Atoi(linha[3])
+		if err != nil {
+			fmt.Printf("Erro ao converter quantidade na linha %d: %v\n", i+1, err)
+			continue
+		}
+
+		produtosEmLote[i] = l.ProdutoEmLote{
+			ProdutoID:  i,
+			Nome:       linha[0],
+			Descricao:  linha[1],
+			Preco:      preco,
+			Quantidade: quantidade,
+		}
+	}
+
+	s.CadastrarProdutosEmLote(produtosEmLote)
+	fmt.Println("Produtos cadastrados em lote com sucesso.")
 }
