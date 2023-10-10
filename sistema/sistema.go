@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"encoding/csv"
 	"fmt"
-	pedido "mcronalds/pedido"
-	produto "mcronalds/produto"
+	"mcronalds/pedido"
+	"mcronalds/produto"
 	l "mcronalds/produtolote"
 	"os"
 	"strconv"
@@ -14,9 +14,10 @@ import (
 )
 
 type Sistema struct {
-	Produtos []produto.Produto
-	Pedidos  []pedido.Pedido
-	Carrinho struct {
+	Produtos       []produto.Produto
+	ProdutoIDCount int
+	Pedidos        []pedido.Pedido
+	Carrinho       struct {
 		TotalProdutos int
 		TotalPedidos  int
 		TotalReceita  float64
@@ -27,7 +28,14 @@ type Sistema struct {
 // Adicionar Produto
 func (s *Sistema) AdicionarProduto() {
 	var produto produto.Produto
-	produto.ID = s.Carrinho.TotalProdutos + 1
+	s.ProdutoIDCount++ // Incrementar o contador de ID
+
+	if s.ProdutoIDCount > 50 {
+		// Se o contador de ID exceder 50, reinicie em 1
+		s.ProdutoIDCount = 1
+	}
+
+	produto.ID = s.ProdutoIDCount
 
 	if produto.ID <= 0 {
 		fmt.Println("ID do produto deve ser um valor positivo.")
@@ -274,6 +282,15 @@ func (s *Sistema) CadastrarProdutosEmLote(produtosEmLote []l.ProdutoEmLote) {
 	}
 }
 func (s *Sistema) CadastrarProdutosEmLote2() {
+	var produtolote l.ProdutoEmLote
+	s.ProdutoIDCount++ // Incrementar o contador de ID
+
+	if s.ProdutoIDCount > 50 {
+		// Se o contador de ID exceder 50, reinicie em 1
+		s.ProdutoIDCount = 1
+	}
+
+	produtolote.ProdutoID = s.ProdutoIDCount
 
 	if s.Carrinho.TotalProdutos >= 50 {
 		fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
@@ -319,6 +336,15 @@ func (s *Sistema) CadastrarProdutosEmLote2() {
 }
 
 func (s *Sistema) CadastrarProdutosEmLoteCSV() {
+	var produtolote l.ProdutoEmLote
+	s.ProdutoIDCount++ // Incrementar o contador de ID
+
+	if s.ProdutoIDCount > 50 {
+		// Se o contador de ID exceder 50, reinicie em 1
+		s.ProdutoIDCount = 1
+	}
+
+	produtolote.ProdutoID = s.ProdutoIDCount
 
 	if s.Carrinho.TotalProdutos >= 50 {
 		fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
@@ -375,4 +401,8 @@ func (s *Sistema) CadastrarProdutosEmLoteCSV() {
 
 	s.CadastrarProdutosEmLote(produtosEmLote)
 	fmt.Println("Produtos cadastrados em lote com sucesso.")
+}
+
+func (s *Sistema) ExibirTempoMedioExpedicao() {
+	fmt.Printf("Tempo médio de expedição: %s\n", s.TempoMedioExpedicao.String())
 }
