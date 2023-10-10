@@ -12,13 +12,14 @@ func main() {
 		fmt.Println("----------------------------")
 		fmt.Println("McRonald's - Sistema de Pedidos Eletrônicos")
 		fmt.Println("1. Cadastrar Produto")
-		fmt.Println("2. Remover Produto")
-		fmt.Println("3. Exibir Produtos")
-		fmt.Println("4. Fazer Pedido")
-		fmt.Println("5. Expedir Pedido")
-		fmt.Println("6. Exibir Métricas do Sistema")
-		fmt.Println("7. Exibir Pedidos Em Aberto")
-		fmt.Println("7. Sair")
+		fmt.Println("2.Cadastrar Produtos em Lote")
+		fmt.Println("3. Remover Produto")
+		fmt.Println("4. Exibir Produtos")
+		fmt.Println("5. Fazer Pedido")
+		fmt.Println("6. Expedir Pedido")
+		fmt.Println("7. Exibir Métricas do Sistema")
+		fmt.Println("8. Exibir Pedidos Em Aberto")
+		fmt.Println("9. Sair")
 		fmt.Println("----------------------------")
 
 		var escolha int
@@ -30,24 +31,28 @@ func main() {
 			fmt.Println("----------------------------")
 			sistema.AdicionarProduto()
 		case 2:
-			fmt.Println("----------------------------")
-			sistema.RemoverProduto()
+
+			fmt.Println("------------------------------")
+			sistema.CadastrarProdutosEmLoteCSV()
 		case 3:
 			fmt.Println("----------------------------")
-			sistema.ExibirProdutos()
+			sistema.RemoverProduto()
 		case 4:
 			fmt.Println("----------------------------")
-			sistema.FazerPedido()
+			sistema.ExibirProdutos()
 		case 5:
 			fmt.Println("----------------------------")
-			sistema.ExpedirPedido()
+			sistema.FazerPedido()
 		case 6:
 			fmt.Println("----------------------------")
-			sistema.ExibirMetricas()
+			sistema.ExpedirPedido()
 		case 7:
 			fmt.Println("----------------------------")
-			sistema.ExibirPedidosEmAberto()
+			sistema.ExibirMetricas()
 		case 8:
+			fmt.Println("----------------------------")
+			sistema.ExibirPedidosEmAberto()
+		case 9:
 			fmt.Println("----------------------------")
 			fmt.Println("Saindo do sistema.")
 			os.Exit(0)

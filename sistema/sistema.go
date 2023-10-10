@@ -2,10 +2,13 @@ package sistema
 
 import (
 	"bufio"
+	"encoding/csv"
 	"fmt"
 	pedido "mcronalds/pedido"
 	produto "mcronalds/produto"
+	l "mcronalds/produtolote"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -217,17 +220,74 @@ func (s *Sistema) ExibirMetricas() {
 	fmt.Printf("Faturamento total até o momento: R$%.2f\n", s.Carrinho.TotalReceita)
 }
 
-func (s *Sistema) CadastrarProdutosEmLote(produtos []produto.Produto) {
-	for _, p := range produtos {
-		p.ID = s.Carrinho.TotalProdutos + 1
-		s.Produtos = append(s.Produtos, p)
-		s.Carrinho.TotalProdutos++
-	}
-}
-
 func (s *Sistema) ExibirPedidosEmAberto() {
 	fmt.Println("Pedidos em aberto:")
 	for _, pedido := range s.Pedidos {
 		fmt.Printf("ID: %d, Entrega: %t, Total: R$%.2f\n", pedido.ID, pedido.Entrega, pedido.ValorTotal)
 	}
+}
+func (s *Sistema) CadastrarProdutosEmLote(produtosEmLote []l.ProdutoEmLote) {
+	for _, p := range produtosEmLote {
+		p.ProdutoID = s.Carrinho.TotalProdutos + 1
+		s.Produtos = append(s.Produtos, produto.Produto{
+			ID:         p.ProdutoID,
+			Nome:       p.Nome,
+			Descricao:  p.Descricao,
+			Preco:      p.Preco,
+			Quantidade: p.Quantidade,
+		})
+		s.Carrinho.TotalProdutos++
+	}
+}
+
+func (s *Sistema) CadastrarProdutosEmLoteCSV() {
+	fmt.Print("Nome do arquivo CSV de produtos em lote: ")
+	var arquivoCSV string
+	fmt.Scanln(&arquivoCSV)
+
+	arquivo, err := os.Open(arquivoCSV)
+	if err != nil {
+		fmt.Println("Erro ao abrir o arquivo:", err)
+		return
+	}
+	defer arquivo.Close()
+
+	reader := csv.NewReader(arquivo)
+	linhas, err := reader.ReadAll()
+	if err != nil {
+		fmt.Println("Erro ao ler o arquivo CSV:", err)
+		return
+	}
+
+	produtosEmLote := make([]l.ProdutoEmLote, len(linhas))
+
+	for i, linha := range linhas {
+		if len(linha) != 4 {
+			fmt.Printf("Linha %d do CSV é inválida e será ignorada.\n", i+1)
+			continue
+		}
+
+		// Converte os valores do CSV para tipos apropriados
+		preco, err := strconv.ParseFloat(linha[2], 64)
+		if err != nil {
+			fmt.Printf("Erro ao converter preço na linha %d: %v\n", i+1, err)
+			continue
+		}
+
+		quantidade, err := strconv.Atoi(linha[3])
+		if err != nil {
+			fmt.Printf("Erro ao converter quantidade na linha %d: %v\n", i+1, err)
+			continue
+		}
+
+		produtosEmLote[i] = l.ProdutoEmLote{
+			Nome:       linha[0],
+			Descricao:  linha[1],
+			Preco:      preco,
+			Quantidade: quantidade,
+		}
+	}
+
+	s.CadastrarProdutosEmLote(produtosEmLote)
+	fmt.Println("Produtos cadastrados em lote com sucesso.")
 }
