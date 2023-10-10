@@ -25,64 +25,69 @@ type Sistema struct {
 }
 
 func (s *Sistema) AdicionarProduto() {
-	var produto produto.Produto
-	produto.ID = s.Carrinho.TotalProdutos + 1
+	for {
+		var produto produto.Produto
+		produto.ID = s.Carrinho.TotalProdutos + 1
 
-	if produto.ID <= 0 {
-		fmt.Println("ID do produto deve ser um valor positivo.")
-		return
-	}
-
-	if s.Carrinho.TotalProdutos >= 50 {
-		fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
-		return
-	}
-	if s.Carrinho.TotalPedidos >= 1000 {
-		fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
-		return
-	}
-
-	for i, p := range s.Produtos {
-		if p.ID == produto.ID {
-			fmt.Print("Quantidade do produto: ")
-			fmt.Scanln(&produto.Quantidade)
-			if produto.Quantidade < 0 {
-				fmt.Println("A quantidade do produto deve ser um valor positivo.")
-				return
-			}
-			s.Produtos[i].Quantidade += produto.Quantidade
-			fmt.Println("Quantidade do produto atualizada com sucesso.")
+		if produto.ID <= 0 {
+			fmt.Println("ID do produto deve ser um valor positivo.")
 			return
 		}
+
+		if s.Carrinho.TotalProdutos >= 50 {
+			fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
+			return
+		}
+		if s.Carrinho.TotalPedidos >= 1000 {
+			fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
+			return
+		}
+
+		// Verificar se o produto já existe no carrinho
+		for i, p := range s.Produtos {
+			if p.ID == produto.ID {
+				fmt.Print("Quantidade do produto: ")
+				fmt.Scanln(&produto.Quantidade)
+				if produto.Quantidade < 0 {
+					fmt.Println("A quantidade do produto deve ser um valor positivo.")
+					return
+				}
+				s.Produtos[i].Quantidade += produto.Quantidade
+				fmt.Println("Quantidade do produto atualizada com sucesso.")
+				return
+			}
+		}
+
+		fmt.Print("Nome do produto: ")
+		nome, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+		produto.Nome = strings.TrimSpace(nome)
+
+		fmt.Print("Descrição do produto: ")
+		descricao, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+		produto.Descricao = strings.TrimSpace(descricao)
+
+		fmt.Print("Preço do produto (R$): ")
+		fmt.Scanln(&produto.Preco)
+
+		if produto.Preco < 0 {
+			fmt.Println("Preço do produto deve ser um valor positivo.")
+			return
+		}
+
+		s.Produtos = append(s.Produtos, produto)
+		s.Carrinho.TotalProdutos++
+		fmt.Println("Produto cadastrado com sucesso.")
+		fmt.Println("----------------------------")
+
+		fmt.Print("Deseja adicionar mais produtos? (s/n): ")
+		fmt.Println("----------------------------")
+
+		var continuar string
+		fmt.Scanln(&continuar)
+		if continuar != "s" {
+			break
+		}
 	}
-
-	fmt.Print("Nome do produto: ")
-	nome, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-	produto.Nome = strings.TrimSpace(nome)
-
-	fmt.Print("Descrição do produto: ")
-	descricao, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-	produto.Descricao = strings.TrimSpace(descricao)
-
-	fmt.Print("Preço do produto (R$): ")
-	fmt.Scanln(&produto.Preco)
-
-	if produto.Preco < 0 {
-		fmt.Println("Preço do produto deve ser um valor positivo.")
-		return
-	}
-
-	fmt.Print("Quantidade do produto: ")
-	fmt.Scanln(&produto.Quantidade)
-
-	if produto.Quantidade <= 0 {
-		fmt.Println("A quantidade do produto deve ser um valor positivo.")
-		return
-	}
-
-	s.Produtos = append(s.Produtos, produto)
-	s.Carrinho.TotalProdutos++
-	fmt.Println("Produto cadastrado com sucesso.")
 }
 
 func (s *Sistema) RemoverProduto() {
@@ -239,6 +244,12 @@ func (s *Sistema) CadastrarProdutosEmLote(produtosEmLote []l.ProdutoEmLote) {
 	}
 }
 func (s *Sistema) CadastrarProdutosEmLote2() {
+
+	if s.Carrinho.TotalProdutos >= 50 {
+		fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
+		return
+	}
+
 	fmt.Print("Quantos produtos deseja cadastrar? ")
 	var quantidadeProdutos int
 	fmt.Scanln(&quantidadeProdutos)
@@ -270,6 +281,7 @@ func (s *Sistema) CadastrarProdutosEmLote2() {
 			Preco:      preco,
 			Quantidade: quantidade,
 		}
+
 	}
 
 	s.CadastrarProdutosEmLote(produtosEmLote)
@@ -277,6 +289,12 @@ func (s *Sistema) CadastrarProdutosEmLote2() {
 }
 
 func (s *Sistema) CadastrarProdutosEmLoteCSV() {
+
+	if s.Carrinho.TotalProdutos >= 50 {
+		fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
+		return
+	}
+
 	fmt.Print("Nome do arquivo CSV de produtos em lote: ")
 	var arquivoCSV string
 	fmt.Scanln(&arquivoCSV)
