@@ -24,7 +24,6 @@ type Sistema struct {
 	TempoMedioExpedicao time.Duration
 }
 
-// AdicionarProduto adiciona um produto ao carrinho
 func (s *Sistema) AdicionarProduto() {
 	var produto produto.Produto
 	produto.ID = s.Carrinho.TotalProdutos + 1
@@ -34,7 +33,6 @@ func (s *Sistema) AdicionarProduto() {
 		return
 	}
 
-	// Verificar limite de produtos
 	if s.Carrinho.TotalProdutos >= 50 {
 		fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
 		return
@@ -44,7 +42,6 @@ func (s *Sistema) AdicionarProduto() {
 		return
 	}
 
-	// Verificar se o produto já existe no carrinho
 	for i, p := range s.Produtos {
 		if p.ID == produto.ID {
 			fmt.Print("Quantidade do produto: ")

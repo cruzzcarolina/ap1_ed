@@ -4,7 +4,6 @@ Projeto AP1 - Carolina Cruz, Juliana Hall e Maria Mello
 Descrevendo como utilizar o programa
 -
 
-
 **Comandos Aceitos**:
 1. **Cadastrar Produto**: Permite cadastrar um novo produto.
 2. **Remover Produto**: Permite remover um produto existente com base em seu ID.

@@ -12,7 +12,7 @@ func main() {
 		fmt.Println("----------------------------")
 		fmt.Println("McRonald's - Sistema de Pedidos Eletrônicos")
 		fmt.Println("1. Cadastrar Produto")
-		fmt.Println("2.Cadastrar Produtos em Lote via CSV")
+		fmt.Println("2. Cadastrar Produtos em Lote via CSV")
 		fmt.Println("3. Cadastrar Produtos em Lote")
 		fmt.Println("4. Remover Produto")
 		fmt.Println("5. Exibir Produtos")
