@@ -43,7 +43,6 @@ func (s *Sistema) AdicionarProduto() {
 			return
 		}
 
-		// Verificar se o produto já existe no carrinho
 		for i, p := range s.Produtos {
 			if p.ID == produto.ID {
 				fmt.Print("Quantidade do produto: ")
@@ -74,19 +73,17 @@ func (s *Sistema) AdicionarProduto() {
 			return
 		}
 
+		fmt.Print("Quantidade do produto: ")
+		fmt.Scanln(&produto.Quantidade)
+
+		if produto.Quantidade <= 0 {
+			fmt.Println("A quantidade do produto deve ser um valor positivo.")
+			return
+		}
+
 		s.Produtos = append(s.Produtos, produto)
 		s.Carrinho.TotalProdutos++
 		fmt.Println("Produto cadastrado com sucesso.")
-		fmt.Println("----------------------------")
-
-		fmt.Print("Deseja adicionar mais produtos? (s/n): ")
-		fmt.Println("----------------------------")
-
-		var continuar string
-		fmt.Scanln(&continuar)
-		if continuar != "s" {
-			break
-		}
 	}
 }
 
@@ -142,8 +139,18 @@ func (s *Sistema) FazerPedido() {
 			produtoEncontrado := false
 			for _, p := range s.Produtos {
 				if p.ID == idProduto {
+
+					fmt.Print("Quantidade do produto: ")
+					var quantidade int
+					fmt.Scanln(&quantidade)
+					if quantidade <= 0 {
+						fmt.Println("A quantidade do produto deve ser um valor positivo.")
+						continue
+					}
+
+					p.Quantidade = quantidade
 					pedido.Produtos = append(pedido.Produtos, p)
-					pedido.ValorTotal += p.Preco
+					pedido.ValorTotal += p.Preco * float64(quantidade)
 					produtoEncontrado = true
 					break
 				}
@@ -162,8 +169,18 @@ func (s *Sistema) FazerPedido() {
 			produtoEncontrado := false
 			for _, p := range s.Produtos {
 				if p.Nome == nomeProduto {
+
+					fmt.Print("Quantidade do produto: ")
+					var quantidade int
+					fmt.Scanln(&quantidade)
+					if quantidade <= 0 {
+						fmt.Println("A quantidade do produto deve ser um valor positivo.")
+						continue
+					}
+
+					p.Quantidade = quantidade
 					pedido.Produtos = append(pedido.Produtos, p)
-					pedido.ValorTotal += p.Preco
+					pedido.ValorTotal += p.Preco * float64(quantidade)
 					produtoEncontrado = true
 					break
 				}
@@ -188,6 +205,12 @@ func (s *Sistema) FazerPedido() {
 		return
 	}
 
+	if pedido.Entrega {
+		// Calcule a taxa de entrega (substitua isso pelo cálculo real)
+		taxaDeEntrega := 5.0 // Exemplo: taxa fixa de entrega de R$5.00
+		pedido.ValorTotal += taxaDeEntrega
+	}
+
 	if s.Carrinho.TotalPedidos >= 1000 {
 		fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
 		return
@@ -195,6 +218,8 @@ func (s *Sistema) FazerPedido() {
 
 	s.Pedidos = append(s.Pedidos, pedido)
 	s.Carrinho.TotalPedidos++
+	fmt.Println("----------------------------")
+	fmt.Printf("Total:  R$ %.2f ", pedido.ValorTotal)
 	fmt.Println("Pedido feito com sucesso.")
 }
 
