@@ -309,16 +309,11 @@ func (s *Sistema) CadastrarProdutosEmLote2() {
 		var preco float64
 		fmt.Scanln(&preco)
 
-		fmt.Print("Quantidade do produto: ")
-		var quantidade int
-		fmt.Scanln(&quantidade)
-
 		produtosEmLote[i] = l.ProdutoEmLote{
-			ProdutoID:  i,
-			Nome:       nome,
-			Descricao:  descricao,
-			Preco:      preco,
-			Quantidade: quantidade,
+			ProdutoID: i,
+			Nome:      nome,
+			Descricao: descricao,
+			Preco:     preco,
 		}
 
 	}
