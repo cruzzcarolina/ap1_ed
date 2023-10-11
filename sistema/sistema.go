@@ -81,14 +81,6 @@ func (s *Sistema) AdicionarProduto() {
 		return
 	}
 
-	fmt.Print("Quantidade do produto: ")
-	fmt.Scanln(&produto.Quantidade)
-
-	if produto.Quantidade <= 0 {
-		fmt.Println("A quantidade do produto deve ser um valor positivo.")
-		return
-	}
-
 	s.Produtos = append(s.Produtos, produto)
 	s.Carrinho.TotalProdutos++
 	fmt.Println("Produto cadastrado com sucesso.")
