@@ -37,68 +37,64 @@ func (s *Sistema) AdicionarProduto() {
 
 	produto.ID = s.ProdutoIDCount
 
-    if produto.ID <= 0 {
-      fmt.Println("ID do produto deve ser um valor positivo.")
-      return
-    }
+	if produto.ID <= 0 {
+		fmt.Println("ID do produto deve ser um valor positivo.")
+		return
+	}
 
-    // Verificar limite de produtos
-    if s.Carrinho.TotalProdutos >= 50 {
-      fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
-      return
-    }
-    if s.Carrinho.TotalPedidos >= 1000 {
-      fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
-      return
-    }
+	if s.Carrinho.TotalProdutos >= 50 {
+		fmt.Println("Limite de produtos atingido. Não é possível adicionar mais produtos.")
+		return
+	}
+	if s.Carrinho.TotalPedidos >= 1000 {
+		fmt.Println("Limite de pedidos atingido. Não é possível criar mais pedidos.")
+		return
+	}
 
-    // Verificar se o produto já existe no carrinho
-    for i, p := range s.Produtos {
-      if p.ID == produto.ID {
-        fmt.Print("Quantidade do produto: ")
-        fmt.Scanln(&produto.Quantidade)
-        if produto.Quantidade < 0 {
-          fmt.Println("A quantidade do produto deve ser um valor positivo.")
-          return
-        }
-        s.Produtos[i].Quantidade += produto.Quantidade
-        fmt.Println("Quantidade do produto atualizada com sucesso.")
-        return
-      }
-    }
+	for i, p := range s.Produtos {
+		if p.ID == produto.ID {
+			fmt.Print("Quantidade do produto: ")
+			fmt.Scanln(&produto.Quantidade)
+			if produto.Quantidade < 0 {
+				fmt.Println("A quantidade do produto deve ser um valor positivo.")
+				return
+			}
+			s.Produtos[i].Quantidade += produto.Quantidade
+			fmt.Println("Quantidade do produto atualizada com sucesso.")
+			return
+		}
+	}
 
-    fmt.Print("Nome do produto: ")
-    nome, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-    produto.Nome = strings.TrimSpace(nome)
+	fmt.Print("Nome do produto: ")
+	nome, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	produto.Nome = strings.TrimSpace(nome)
 
-      fmt.Print("Descrição do produto: ")
-      descricao, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-      produto.Descricao = strings.TrimSpace(descricao)
+	fmt.Print("Descrição do produto: ")
+	descricao, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	produto.Descricao = strings.TrimSpace(descricao)
 
-      fmt.Print("Preço do produto (R$): ")
-      fmt.Scanln(&produto.Preco)
+	fmt.Print("Preço do produto (R$): ")
+	fmt.Scanln(&produto.Preco)
 
-      if produto.Preco < 0 {
-        fmt.Println("Preço do produto deve ser um valor positivo.")
-        return
-      }
+	if produto.Preco < 0 {
+		fmt.Println("Preço do produto deve ser um valor positivo.")
+		return
+	}
 
-      s.Produtos = append(s.Produtos, produto)
-      s.Carrinho.TotalProdutos++
-      fmt.Println("Produto cadastrado com sucesso.")
-      fmt.Println("----------------------------")
+	fmt.Print("Quantidade do produto: ")
+	fmt.Scanln(&produto.Quantidade)
 
-      fmt.Print("Deseja adicionar mais produtos? (s/n): ")
-      fmt.Println("----------------------------")
+	if produto.Quantidade <= 0 {
+		fmt.Println("A quantidade do produto deve ser um valor positivo.")
+		return
+	}
 
-      var continuar string
-      fmt.Scanln(&continuar)
-      if continuar != "s" {
-        break
-      }
-	   }
+	s.Produtos = append(s.Produtos, produto)
+	s.Carrinho.TotalProdutos++
+	fmt.Println("Produto cadastrado com sucesso.")
 }
 
+// Remover Produto
 func (s *Sistema) RemoverProduto() {
 	fmt.Print("Digite o ID do produto a ser removido: ")
 	var idProduto int
@@ -261,8 +257,8 @@ func (s *Sistema) ExibirMetricas() {
 	fmt.Printf("Número total de produtos cadastrados: %d\n", s.Carrinho.TotalProdutos)
 	fmt.Printf("Número de pedidos encerrados: %d\n", s.Carrinho.TotalPedidos)
 	fmt.Printf("Faturamento total até o momento: R$%.2f\n", s.Carrinho.TotalReceita)
-	fmt.Printf("Tempo médio de expedição: %.d\n", s.TempoMedioExpedicao)
 }
+
 // Exibir Pedidios Em Aberto
 func (s *Sistema) ExibirPedidosEmAberto() {
 	fmt.Println("Pedidos em aberto:")
