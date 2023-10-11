@@ -1,10 +1,9 @@
-package produto
+package produtolote
 
-type Produto struct {
-	ID         int
+type ProdutoEmLote struct {
+	ProdutoID  int
 	Nome       string
 	Descricao  string
 	Preco      float64
 	Quantidade int
-	Categoria  string
 }
