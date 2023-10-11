@@ -6,4 +6,5 @@ type Produto struct {
 	Descricao  string
 	Preco      float64
 	Quantidade int
+	Categoria  string
 }
