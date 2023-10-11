@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	s "mcronalds/sistema"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -21,7 +23,9 @@ func main() {
 		fmt.Println("8. Exibir Métricas do Sistema")
 		fmt.Println("9. Exibir Pedidos Em Aberto")
 		fmt.Println("10. Tempo Médio de Expedição")
-		fmt.Println("11. Sair")
+		fmt.Println("11. Buscar Produto por Nome")
+		fmt.Println("12. Buscar produto por ID")
+		fmt.Println("13. Sair")
 		fmt.Println("----------------------------")
 
 		var escolha int
@@ -60,6 +64,15 @@ func main() {
 			fmt.Println("----------------------------")
 			sistema.ExibirTempoMedioExpedicao()
 		case 11:
+			fmt.Print("Digite o nome para buscar produtos: ")
+			textoBuscado, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+			sistema.BuscarProdutosPorNome(strings.TrimSpace(textoBuscado))
+		case 12:
+			fmt.Print("Digite o ID do produto a ser buscado: ")
+			var idProduto int
+			fmt.Scanln(&idProduto)
+			sistema.BuscarProdutoPorID(idProduto)
+		case 13:
 			fmt.Println("----------------------------")
 			fmt.Println("Saindo do sistema.")
 			os.Exit(0)

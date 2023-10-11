@@ -393,3 +393,36 @@ func (s *Sistema) CadastrarProdutosEmLoteCSV() {
 func (s *Sistema) ExibirTempoMedioExpedicao() {
 	fmt.Printf("Tempo médio de expedição: %s\n", s.TempoMedioExpedicao.String())
 }
+
+// BuscarProdutosPorNome busca produtos pelo nome e lista todos os produtos cujo nome inicia com o texto buscado.
+func (s *Sistema) BuscarProdutosPorNome(textoBuscado string) {
+	fmt.Println("Produtos cujo nome inicia com '", textoBuscado, "':")
+	encontrado := false
+
+	for _, p := range s.Produtos {
+		if nome := p.Nome; strings.HasPrefix(nome, textoBuscado) {
+			fmt.Printf("ID: %d, Nome: %s, Descrição: %s, Preço: R$%.2f\n", p.ID, nome, p.Descricao, p.Preco)
+			encontrado = true
+		}
+	}
+
+	if !encontrado {
+		fmt.Println("Produto não encontrado.")
+	}
+}
+
+// BuscarProdutoPorID busca um produto pelo seu identificador (ID) e exibe todas as informações na tela.
+func (s *Sistema) BuscarProdutoPorID(idProduto int) {
+	encontrado := false
+	for _, p := range s.Produtos {
+		if p.ID == idProduto {
+			fmt.Printf("Produto encontrado:\nID: %d, Nome: %s, Descrição: %s, Preço: R$%.2f\n", p.ID, p.Nome, p.Descricao, p.Preco)
+			encontrado = true
+			break
+		}
+	}
+
+	if !encontrado {
+		fmt.Println("Produto não encontrado.")
+	}
+}
